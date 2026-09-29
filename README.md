@@ -133,7 +133,10 @@ Requires Python 3.10+ and pytest. No other dependencies.
 
 ## Related
 
-- evidence-gated-e2e-loop [link]: the full loop runner (queue, budget, STOP) this repo leaves out.
+- [ko-tc-playwright](https://github.com/tmkim0512-max/ko-tc-playwright) — turns Korean manual test cases into Playwright (pytest) code; reports conversion rate and real run results separately
+- [pom-scout](https://github.com/tmkim0512-max/pom-scout) — explores a web app and writes Page Object JSON with selectors verified unique on the live page
+- [evidence-gated-e2e-loop](https://github.com/tmkim0512-max/evidence-gated-e2e-loop) — accepts AI-written Playwright tests only on file evidence, then replays them without AI
+- [parking-api-qa-lab](https://github.com/tmkim0512-max/parking-api-qa-lab) — a small parking API tested with pytest, a hand-built mock server, k6 thresholds and GitHub Actions
 
 ## License
 

@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "false-green-guard @ git+https://github.com/OWNER/false-green-guard"
+      - run: pip install "false-green-guard @ git+https://github.com/tmkim0512-max/false-green-guard"
       - name: audit test-neutralizing changes
         shell: bash  # enables pipefail: a failed git diff must not look like an empty, clean diff
         env:
