@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "false-green-guard"
+version = "0.1.0"
+description = "Don't trust a green build you didn't verify: detect test-neutralizing diffs and re-judge fixes in isolation."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Taemin Kim" }]
+requires-python = ">=3.10"
+dependencies = ["pytest>=7"]
+
+[project.scripts]
+fgg = "fgg.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]  # examples/ holds a deliberately failing project

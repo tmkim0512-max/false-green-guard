@@ -1,0 +1,27 @@
+# Copy to .github/workflows/pr-gate.yml in your repository.
+# Fails the pull request when its diff skips, deletes, or weakens tests,
+# or narrows test collection. No AI, no API key: a pure diff check.
+name: pr-gate
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  false-green-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "false-green-guard @ git+https://github.com/OWNER/false-green-guard"
+      - name: audit test-neutralizing changes
+        shell: bash  # enables pipefail: a failed git diff must not look like an empty, clean diff
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: git diff "origin/${BASE_REF}...HEAD" | fgg audit

@@ -1,0 +1,6 @@
+{
+  "tests.test_price::test_discount": [
+    {"strategy": "honest_fix", "claim": "Divide percent by 100.",
+     "files": {"src/shop/price.py": "attempts/honest_fix.py"}}
+  ]
+}

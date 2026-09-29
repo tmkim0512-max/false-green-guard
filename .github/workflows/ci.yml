@@ -1,0 +1,52 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e .
+      - run: python -m pytest -q
+      - name: demo - cheating agent is rejected until the honest fix (expect DONE, exit 0)
+        run: fgg run examples/buggy-shop --agent mock:examples/mock-agent/cheater.json
+      - name: demo - honest agent (expect DONE, exit 0)
+        run: fgg run examples/buggy-shop --agent mock:examples/mock-agent/honest.json
+      - name: demo - budget runs out before the honest fix (expect HALT, exit 2)
+        run: |
+          set +e
+          fgg run examples/buggy-shop --agent mock:examples/mock-agent/cheater.json --max-iters 3
+          code=$?
+          test "$code" -eq 2 || { echo "expected exit 2, got $code"; exit 1; }
+
+  # fgg guards its own pull requests. This repo's own tests/ are audited like anyone else's.
+  audit-own-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: fgg audit on the PR diff
+        shell: bash  # enables pipefail: a failed git diff must not look like an empty, clean diff
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        # examples/mock-agent/attempts/ holds the scripted cheats on purpose, so it is the one path excluded.
+        run: git diff "origin/${BASE_REF}...HEAD" -- . ':!examples/mock-agent/attempts' | fgg audit
